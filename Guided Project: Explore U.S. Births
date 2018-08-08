@@ -1,0 +1,61 @@
+def read_csv(filename):
+    string_data = open(filename).read()
+    string_list = string_data.split("\n")[1:]
+    final_list = []
+    
+    for row in string_list:
+        string_fields = row.split(",")
+        int_fields = []
+        for value in string_fields:
+            int_fields.append(int(value))
+        final_list.append(int_fields)
+    return final_list
+    
+cdc_list = read_csv("US_births_1994-2003_CDC_NCHS.csv")
+
+def month_births(list_of_lists):
+    births_per_month = {}
+    
+    for data_set in list_of_lists:
+        month = data_set[1]
+        births = data_set[4]
+        if month in births_per_month:
+            births_per_month[month] = births_per_month[month] + births
+        else:
+            births_per_month[month] = births
+    return births_per_month
+    
+cdc_month_births = month_births(cdc_list)
+
+def dow_births(my_list):
+    day_births = {}
+    
+    for row in my_list:
+        day = row[3]
+        births = row[4]
+        if day in day_births:
+            day_births[day] = day_births[day] + births
+        else:
+            day_births[day] = births
+    return day_births
+
+cdc_day_births = dow_births(cdc_list)
+
+def calc_counts(data, column):
+    sums_dict = {}
+    
+    for row in data:
+        col_value = row[column]
+        births = row[4]
+        if col_value in sums_dict:
+            sums_dict[col_value] = sums_dict[col_value] + births
+        else:
+            sums_dict[col_value] = births
+    return sums_dict
+
+cdc_year_births = calc_counts(cdc_list,0)
+cdc_month_births = calc_counts(cdc_list,1)
+cdc_dom_births = calc_counts(cdc_list,2)
+cdc_dow_births = calc_counts(cdc_list,3)
+
+cdc_dow_births
